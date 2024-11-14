@@ -1,6 +1,5 @@
 package dimadon.business.tienda_don_doug_dimmadome.entities;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,23 +22,19 @@ public class DetalleEntrada {
     @JoinColumn(name = "id_entrada", nullable = false)
     private Entrada entrada;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto producto;
 
-    @Column(name = "nombre_producto", nullable = false)
-    private String nombreProducto;
-
-    @Column(name = "cantidad", nullable = false)
+    @Column(nullable = false)
     private int cantidad;
 
     @Column(name = "costo_unitario", nullable = false)
     private double costoUnitario;
 
-    @Column(nullable = false)
-    private double subtotal;
 
-    // getters and setters
+    @Column(nullable = false)
+    private String descripcion;
 
     public int getIdDetalle() {
         return idDetalle;
@@ -65,14 +60,6 @@ public class DetalleEntrada {
         this.producto = producto;
     }
 
-    public String getNombreProducto() {
-        return nombreProducto;
-    }
-
-    public void setNombreProducto(String nombreProducto) {
-        this.nombreProducto = nombreProducto;
-    }
-
     public int getCantidad() {
         return cantidad;
     }
@@ -89,12 +76,12 @@ public class DetalleEntrada {
         this.costoUnitario = costoUnitario;
     }
 
-    public double getSubtotal() {
-        return subtotal;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setSubtotal(double subtotal) {
-        this.subtotal = subtotal;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
 }

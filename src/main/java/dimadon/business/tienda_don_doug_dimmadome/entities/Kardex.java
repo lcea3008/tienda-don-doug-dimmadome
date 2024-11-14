@@ -32,8 +32,8 @@ public class Kardex {
     @Column(name = "tipo_operacion", nullable = false)
     private String tipoOperacion;
 
-    @Column(name = "empresa")
-    private String empresa;
+    @Column(name = "descripcion", nullable = false)
+    private String descripcion;
 
     @Column(name = "cantidad_entrada")
     private int cantidadEntrada;
@@ -102,12 +102,12 @@ public class Kardex {
         this.tipoOperacion = tipoOperacion;
     }
 
-    public String getEmpresa() {
-        return empresa;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setEmpresa(String empresa) {
-        this.empresa = empresa;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public int getCantidadEntrada() {

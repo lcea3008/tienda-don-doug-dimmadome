@@ -35,6 +35,9 @@ public class DetalleSalida {
     @Column(nullable = false)
     private double total;
 
+    @Column(nullable = false)
+    private String descripcion;
+
     public int getIdDetalle() {
         return idDetalle;
     }
@@ -81,6 +84,14 @@ public class DetalleSalida {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
 }

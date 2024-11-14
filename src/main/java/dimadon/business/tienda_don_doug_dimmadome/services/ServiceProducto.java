@@ -34,7 +34,7 @@ public class ServiceProducto {
         kardex.setProducto(nuevoProducto);
         kardex.setNombreProducto(producto.getNombre());
         kardex.setTipoOperacion("Entrada");
-        kardex.setEmpresa("Don Doug Dimadon");
+        kardex.setDescripcion("Don Doug Dimadon");
         kardex.setCantidadEntrada(producto.getStock());
         kardex.setCostoUnitarioEntrada(producto.getPrecioUnitario());
         kardex.setCostoTotalEntrada(producto.getPrecioUnitario() * producto.getStock());

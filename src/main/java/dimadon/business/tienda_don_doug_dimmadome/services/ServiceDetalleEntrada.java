@@ -3,6 +3,7 @@ package dimadon.business.tienda_don_doug_dimmadome.services;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,37 +38,43 @@ public class ServiceDetalleEntrada {
     }
 
     @Transactional
-    public DetalleEntrada guardarDetalle(DetalleEntrada detalleEntrada) {
-        Producto producto = productoRepository.findById(detalleEntrada.getProducto().getIdProducto())
-                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado en la base de datos"));
 
-        detalleEntrada.setProducto(producto);
+    public List<DetalleEntrada> registrarDetallesEntradaConKardex(List<DetalleEntrada> detallesEntrada) {
+        List<DetalleEntrada> detallesGuardados = new ArrayList<>();
 
-        DetalleEntrada savedDetalleEntrada = repositoryDetalleEntrada.save(detalleEntrada);
+        for (DetalleEntrada detalleEntrada : detallesEntrada) {
+            Producto producto = productoRepository.findById(detalleEntrada.getProducto().getIdProducto())
+                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado en la base de datos"));
 
-        int nuevoStock = producto.getStock() + detalleEntrada.getCantidad();
-        producto.setStock(nuevoStock);
-        productoRepository.save(producto);
+            detalleEntrada.setProducto(producto);
 
-        String fechaFormateada = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        // Registramos en Kardex
-        Kardex kardex = new Kardex();
-        kardex.setProducto(producto);
-        kardex.setNombreProducto(detalleEntrada.getNombreProducto());
-        kardex.setFecha(fechaFormateada);
-        kardex.setTipoOperacion("Entrada");
-        kardex.setEmpresa("Doug Dimadon");
-        kardex.setCantidadEntrada(detalleEntrada.getCantidad());
-        kardex.setCostoUnitarioEntrada(detalleEntrada.getCostoUnitario());
-        kardex.setCostoTotalEntrada(detalleEntrada.getCantidad() * detalleEntrada.getCostoUnitario());
-        kardex.setCantidadSaldo(detalleEntrada.getProducto().getStock());
-        kardex.setCostoUnitarioSaldo(detalleEntrada.getProducto().getPrecioUnitario());
-        kardex.setCostoTotalSaldo(
-                detalleEntrada.getProducto().getStock() * detalleEntrada.getProducto().getPrecioUnitario());
+            DetalleEntrada savedDetalleEntrada = repositoryDetalleEntrada.save(detalleEntrada);
 
-        repositoryKardex.save(kardex);
+            int nuevoStock = producto.getStock() + detalleEntrada.getCantidad();
+            producto.setStock(nuevoStock);
+            productoRepository.save(producto);
 
-        return savedDetalleEntrada;
+            String fechaFormateada = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+            // Crear registro en Kardex
+            Kardex kardex = new Kardex();
+            kardex.setProducto(producto);
+            kardex.setNombreProducto(producto.getNombre());
+            kardex.setFecha(fechaFormateada);
+            kardex.setTipoOperacion("Entrada");
+            kardex.setDescripcion(detalleEntrada.getDescripcion());
+            kardex.setCantidadEntrada(detalleEntrada.getCantidad());
+            kardex.setCostoUnitarioEntrada(detalleEntrada.getCostoUnitario());
+            kardex.setCostoTotalEntrada(detalleEntrada.getCostoUnitario() * detalleEntrada.getCantidad());
+            kardex.setCantidadSaldo(nuevoStock);
+            kardex.setCostoUnitarioSaldo(detalleEntrada.getCostoUnitario());
+            kardex.setCostoTotalSaldo(detalleEntrada.getCostoUnitario() * nuevoStock);
+            repositoryKardex.save(kardex);
+
+            detallesGuardados.add(savedDetalleEntrada);
+        }
+
+        return detallesGuardados;
     }
 
     public ArrayList<DetalleEntrada> obtenerDetalleEntradas() {

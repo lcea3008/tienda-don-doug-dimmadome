@@ -1,6 +1,7 @@
 package dimadon.business.tienda_don_doug_dimmadome.controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +25,8 @@ public class DetalleSalidaController {
     }
 
     @PostMapping("/insertar")
-    public DetalleSalida insertarDetalleSalida(@RequestBody DetalleSalida detalleSalida) {
-        return serviceDetalleSalida.registrarDetalleSalidaConKardex(detalleSalida);
+    public List<DetalleSalida> insertarDetallesSalida(@RequestBody List<DetalleSalida> detallesSalida) {
+        return serviceDetalleSalida.registrarDetallesSalidaConKardex(detallesSalida);
     }
 
     // obtener ultimo is de salida

@@ -3,6 +3,7 @@ package dimadon.business.tienda_don_doug_dimmadome.services;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,37 +39,43 @@ public class ServiceDetalleSalida {
     }
 
     @Transactional
-    public DetalleSalida registrarDetalleSalidaConKardex(DetalleSalida detalleSalida) {
-        Producto producto = repositoryProducto.findById(detalleSalida.getProducto().getIdProducto())
-                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado en la base de datos"));
+    public List<DetalleSalida> registrarDetallesSalidaConKardex(List<DetalleSalida> detallesSalida) {
+        List<DetalleSalida> detallesGuardados = new ArrayList<>();
 
-        detalleSalida.setProducto(producto);
+        for (DetalleSalida detalleSalida : detallesSalida) {
+            Producto producto = repositoryProducto.findById(detalleSalida.getProducto().getIdProducto())
+                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado en la base de datos"));
 
-        DetalleSalida savedDetalleSalida = repositoryDetalleSalida.save(detalleSalida);
+            detalleSalida.setProducto(producto);
 
-        int nuevoStock = producto.getStock() - detalleSalida.getCantidad();
-        producto.setStock(nuevoStock);
-        repositoryProducto.save(producto);
+            DetalleSalida savedDetalleSalida = repositoryDetalleSalida.save(detalleSalida);
+                
+            int nuevoStock = producto.getStock() - detalleSalida.getCantidad();
+            producto.setStock(nuevoStock);
+            repositoryProducto.save(producto);
 
-        String fechaFormateada = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        // Registramos en Kardex
-        Kardex kardex = new Kardex();
-        kardex.setProducto(producto);
-        kardex.setNombreProducto(detalleSalida.getProducto().getNombre());
-        kardex.setFecha(fechaFormateada);
-        kardex.setTipoOperacion("Salida");
-        kardex.setEmpresa("Doug Dimadon");
-        kardex.setCantidadSalida(detalleSalida.getCantidad());
-        kardex.setCostoUnitarioSalida(detalleSalida.getCostoUnitario());
-        kardex.setCostoTotalSalida(detalleSalida.getCantidad() * detalleSalida.getCostoUnitario());
-        kardex.setCantidadSaldo(detalleSalida.getProducto().getStock());
-        kardex.setCostoUnitarioSaldo(detalleSalida.getProducto().getPrecioUnitario());
-        kardex.setCostoTotalSaldo(
-                detalleSalida.getProducto().getStock() * detalleSalida.getProducto().getPrecioUnitario());
+            String fechaFormateada = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-        repositoryKardex.save(kardex);
+            // Crear registro en Kardex
+            Kardex kardex = new Kardex();
+            kardex.setProducto(producto);
+            kardex.setNombreProducto(detalleSalida.getProducto().getNombre());
+            kardex.setFecha(fechaFormateada);
+            kardex.setTipoOperacion("Salida");
+            kardex.setDescripcion(detalleSalida.getDescripcion());
+            kardex.setCantidadSalida(detalleSalida.getCantidad());
+            kardex.setCostoUnitarioSalida(detalleSalida.getCostoUnitario());
+            kardex.setCostoTotalSalida(detalleSalida.getCantidad() * detalleSalida.getCostoUnitario());
+            kardex.setCantidadSaldo(detalleSalida.getProducto().getStock());
+            kardex.setCostoUnitarioSaldo(detalleSalida.getProducto().getPrecioUnitario());
+            kardex.setCostoTotalSaldo(
+                    detalleSalida.getProducto().getStock() * detalleSalida.getProducto().getPrecioUnitario());
 
-        return savedDetalleSalida;
+            repositoryKardex.save(kardex);
+            detallesGuardados.add(savedDetalleSalida);
+        }
+
+        return detallesGuardados;
     }
 
     public ArrayList<DetalleSalida> obtenerDetalleSalidas() {
