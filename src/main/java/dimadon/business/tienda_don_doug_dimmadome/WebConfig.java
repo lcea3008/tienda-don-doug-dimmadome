@@ -1,4 +1,4 @@
-package dimadon.business;
+package dimadon.business.tienda_don_doug_dimmadome;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

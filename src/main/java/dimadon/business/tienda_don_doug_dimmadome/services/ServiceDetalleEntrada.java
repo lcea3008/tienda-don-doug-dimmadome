@@ -37,7 +37,7 @@ public class ServiceDetalleEntrada {
         return ultimoId; // Retorna el último ID de salida
     }
 
-    @Transactional
+    @Transactional      
 
     public List<DetalleEntrada> registrarDetallesEntradaConKardex(List<DetalleEntrada> detallesEntrada) {
         List<DetalleEntrada> detallesGuardados = new ArrayList<>();

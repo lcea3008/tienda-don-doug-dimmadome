@@ -16,6 +16,7 @@ import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositorySalida;
 import dimadon.business.tienda_don_doug_dimmadome.entities.DetalleSalida;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Kardex;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Producto;
+import dimadon.business.tienda_don_doug_dimmadome.values.Movimientos;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -49,7 +50,7 @@ public class ServiceDetalleSalida {
             detalleSalida.setProducto(producto);
 
             DetalleSalida savedDetalleSalida = repositoryDetalleSalida.save(detalleSalida);
-                
+
             int nuevoStock = producto.getStock() - detalleSalida.getCantidad();
             producto.setStock(nuevoStock);
             repositoryProducto.save(producto);
@@ -61,7 +62,7 @@ public class ServiceDetalleSalida {
             kardex.setProducto(producto);
             kardex.setNombreProducto(detalleSalida.getProducto().getNombre());
             kardex.setFecha(fechaFormateada);
-            kardex.setTipoOperacion("Salida");
+            kardex.setTipoOperacion(Movimientos.SALIDA);
             kardex.setDescripcion(detalleSalida.getDescripcion());
             kardex.setCantidadSalida(detalleSalida.getCantidad());
             kardex.setCostoUnitarioSalida(detalleSalida.getCostoUnitario());

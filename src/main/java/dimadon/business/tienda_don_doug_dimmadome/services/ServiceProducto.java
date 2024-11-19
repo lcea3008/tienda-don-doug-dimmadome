@@ -19,6 +19,7 @@ public class ServiceProducto {
     RepositoryProducto repositoryProducto;
 
     public ArrayList<Producto> obtenerProducto() {
+        
         return (ArrayList<Producto>) repositoryProducto.findAll();
     }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositoryUsuario;
@@ -16,11 +17,15 @@ public class ServiceUsuario {
     @Autowired
     RepositoryUsuario repositoryUsuario;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public ArrayList<Usuario> obtenerUsuarios() {
         return (ArrayList<Usuario>) repositoryUsuario.findAll();
     }
 
     public Usuario guardarUsuario(Usuario usuario) {
+        String contrasenaEncriptada = passwordEncoder.encode(usuario.getContrasena());
         return repositoryUsuario.save(usuario);
     }
 
