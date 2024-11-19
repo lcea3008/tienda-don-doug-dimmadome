@@ -1,8 +1,8 @@
 package dimadon.business.tienda_don_doug_dimmadome.services;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+// import java.util.List;
+// import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,54 +25,52 @@ public class ServiceUsuario {
     }
 
     public Usuario guardarUsuario(Usuario usuario) {
-        String contrasenaEncriptada = passwordEncoder.encode(usuario.getContrasena());
+        String contrasenaEncripteda = passwordEncoder.encode(usuario.getContrasena());
+        usuario.setContrasena(contrasenaEncripteda);
         return repositoryUsuario.save(usuario);
     }
 
     // login
     public Usuario verificarCredenciales(String email, String contrasena) {
-        Optional<Usuario> usuarioOpt = repositoryUsuario.findByEmail(email);
-        if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
-            if (usuario.getContrasena().equals(contrasena)) {
-                return usuario;
-            }
+        Usuario usuario = repositoryUsuario.findByEmail(email).orElse(null);
+        if (usuario != null && passwordEncoder.matches(contrasena, usuario.getContrasena())) {
+            return usuario;
         }
         return null;
     }
 
-    // cambiar estado del usuario
-    public Usuario cambiarEstado(int id, String nuevoEstado) {
-        Optional<Usuario> usuarioOpt = repositoryUsuario.findById(id);
-        if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
-            usuario.setEstado(nuevoEstado);
-            return repositoryUsuario.save(usuario);
-        } else {
-            throw new RuntimeException("Usuario no encontrado");
-        }
-    }
+    // // cambiar estado del usuario
+    // public Usuario cambiarEstado(int id, String nuevoEstado) {
+    // Optional<Usuario> usuarioOpt = repositoryUsuario.findById(id);
+    // if (usuarioOpt.isPresent()) {
+    // Usuario usuario = usuarioOpt.get();
+    // usuario.setEstado(nuevoEstado);
+    // return repositoryUsuario.save(usuario);
+    // } else {
+    // throw new RuntimeException("Usuario no encontrado");
+    // }
+    // }
 
-    // actualizar usuario por id
-    public Usuario actualizarUsuario(int id, Usuario usuarioActualizado) {
-        Optional<Usuario> usuarioExistenteOpt = repositoryUsuario.findById(id);
-        if (usuarioExistenteOpt.isPresent()) {
-            Usuario usuarioExistente = usuarioExistenteOpt.get();
+    // // actualizar usuario por id
+    // public Usuario actualizarUsuario(int id, Usuario usuarioActualizado) {
+    // Optional<Usuario> usuarioExistenteOpt = repositoryUsuario.findById(id);
+    // if (usuarioExistenteOpt.isPresent()) {
+    // Usuario usuarioExistente = usuarioExistenteOpt.get();
 
-            usuarioExistente.setNombre(usuarioActualizado.getNombre());
-            usuarioExistente.setEmail(usuarioActualizado.getEmail());
-            usuarioExistente.setContrasena(usuarioActualizado.getContrasena());
-            usuarioExistente.setTipoUsuario(usuarioActualizado.getTipoUsuario());
-            usuarioExistente.setEstado(usuarioActualizado.getEstado());
+    // usuarioExistente.setNombre(usuarioActualizado.getNombre());
+    // usuarioExistente.setEmail(usuarioActualizado.getEmail());
+    // usuarioExistente.setContrasena(usuarioActualizado.getContrasena());
+    // usuarioExistente.setTipoUsuario(usuarioActualizado.getTipoUsuario());
+    // usuarioExistente.setEstado(usuarioActualizado.getEstado());
 
-            return repositoryUsuario.save(usuarioExistente);
-        } else {
-            return null;
-        }
-    }
+    // return repositoryUsuario.save(usuarioExistente);
+    // } else {
+    // return null;
+    // }
+    // }
 
-    // obtener usuarios activos e inactivos
-    public List<Usuario> obtenerUsuariosPorEstado(String estado) {
-        return repositoryUsuario.findByEstado(estado);
-    }
+    // // obtener usuarios activos e inactivos
+    // public List<Usuario> obtenerUsuariosPorEstado(String estado) {
+    // return repositoryUsuario.findByEstado(estado);
+    // }
 }
