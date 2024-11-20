@@ -31,56 +31,62 @@ public class UsuarioController {
     }
 
     // @PostMapping("/login")
-    // public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> loginData) {
-    //     String email = loginData.get("email");
-    //     String contrasena = loginData.get("contrasena");
+    // public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String,
+    // String> loginData) {
+    // String email = loginData.get("email");
+    // String contrasena = loginData.get("contrasena");
 
-    //     Map<String, Object> response = new HashMap<>();
-    //     try {
-    //         Usuario usuario = serviceUsuario.verificarCredenciales(email, contrasena);
-    //         if (usuario != null) {
-    //             response.put("success", true);
-    //             response.put("message", "Login exitoso");
-    //             response.put("tipoUsuarioId", usuario.getTipoUsuario().getIdTipoUsuario()); // Solo el ID del
-    //                                                                                         // tipoUsuario
-    //             return ResponseEntity.ok(response);
-    //         } else {
-    //             response.put("success", false);
-    //             response.put("message", "Credenciales incorrectas");
-    //             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    //         }
-    //     } catch (Exception e) {
-    //         response.put("success", false);
-    //         response.put("message", "Error en el servidor. Por favor intenta más tarde.");
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    //     }
+    // Map<String, Object> response = new HashMap<>();
+    // try {
+    // Usuario usuario = serviceUsuario.verificarCredenciales(email, contrasena);
+    // if (usuario != null) {
+    // response.put("success", true);
+    // response.put("message", "Login exitoso");
+    // response.put("tipoUsuarioId", usuario.getTipoUsuario().getIdTipoUsuario());
+    // // Solo el ID del
+    // // tipoUsuario
+    // return ResponseEntity.ok(response);
+    // } else {
+    // response.put("success", false);
+    // response.put("message", "Credenciales incorrectas");
+    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    // }
+    // } catch (Exception e) {
+    // response.put("success", false);
+    // response.put("message", "Error en el servidor. Por favor intenta más
+    // tarde.");
+    // return
+    // ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    // }
     // }
 
     // // cambiar estado del usuario
     // @PutMapping("/{id}/estado")
     // public ResponseEntity<Usuario> cambiarEstado(@PathVariable("id") int id,
-    //         @RequestBody Map<String, String> estadoData) {
-    //     String nuevoEstado = estadoData.get("estado");
-    //     Usuario usuarioActualizado = serviceUsuario.cambiarEstado(id, nuevoEstado);
-    //     return new ResponseEntity<>(usuarioActualizado, HttpStatus.OK);
+    // @RequestBody Map<String, String> estadoData) {
+    // String nuevoEstado = estadoData.get("estado");
+    // Usuario usuarioActualizado = serviceUsuario.cambiarEstado(id, nuevoEstado);
+    // return new ResponseEntity<>(usuarioActualizado, HttpStatus.OK);
     // }
 
     // // actualiza segun el id
     // @PutMapping("/{id}")
-    // public ResponseEntity<Usuario> actualizarUsuario(@PathVariable("id") int id, @RequestBody Usuario usuario) {
-    //     Usuario usuarioActualizado = serviceUsuario.actualizarUsuario(id, usuario);
-    //     if (usuarioActualizado != null) {
-    //         return ResponseEntity.ok(usuarioActualizado);
-    //     } else {
-    //         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    //     }
+    // public ResponseEntity<Usuario> actualizarUsuario(@PathVariable("id") int id,
+    // @RequestBody Usuario usuario) {
+    // Usuario usuarioActualizado = serviceUsuario.actualizarUsuario(id, usuario);
+    // if (usuarioActualizado != null) {
+    // return ResponseEntity.ok(usuarioActualizado);
+    // } else {
+    // return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    // }
     // }
 
     // // obtener usuarios activos e inactivos
     // @GetMapping("/estado/{estado}")
-    // public ResponseEntity<List<Usuario>> obtenerUsuariosPorEstado(@PathVariable String estado) {
-    //     List<Usuario> usuarios = serviceUsuario.obtenerUsuariosPorEstado(estado);
-    //     return ResponseEntity.ok(usuarios);
+    // public ResponseEntity<List<Usuario>> obtenerUsuariosPorEstado(@PathVariable
+    // String estado) {
+    // List<Usuario> usuarios = serviceUsuario.obtenerUsuariosPorEstado(estado);
+    // return ResponseEntity.ok(usuarios);
     // }
 
 }

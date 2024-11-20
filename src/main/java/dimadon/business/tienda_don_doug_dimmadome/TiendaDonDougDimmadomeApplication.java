@@ -2,6 +2,8 @@ package dimadon.business.tienda_don_doug_dimmadome;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
@@ -22,6 +24,8 @@ public class TiendaDonDougDimmadomeApplication {
 		System.out.println("DB_PASSWORD: " + dotenv.get("DB_PASSWORD"));
 		System.out.println("RENIEC_API_URL: " + dotenv.get("RENIEC_API_URL"));
 		System.out.println("RENIEC_API_TOKEN: " + dotenv.get("RENIEC_API_TOKEN"));
+		System.out.println("Clave");
+		System.out.println(new BCryptPasswordEncoder().encode("123456"));
 		SpringApplication.run(TiendaDonDougDimmadomeApplication.class, args);
 
 	}

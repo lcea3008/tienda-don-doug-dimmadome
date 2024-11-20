@@ -5,39 +5,54 @@ import java.util.ArrayList;
 // import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositoryUsuario;
+import dimadon.business.tienda_don_doug_dimmadome.config.CustomUser;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Usuario;
 
 @Service
-public class ServiceUsuario {
+public class ServiceUsuario implements UserDetailsService {
 
     @Autowired
     RepositoryUsuario repositoryUsuario;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
     public ArrayList<Usuario> obtenerUsuarios() {
         return (ArrayList<Usuario>) repositoryUsuario.findAll();
     }
 
     public Usuario guardarUsuario(Usuario usuario) {
-        String contrasenaEncripteda = passwordEncoder.encode(usuario.getContrasena());
-        usuario.setContrasena(contrasenaEncripteda);
+        // System.out.println("Clave");
+        // System.out.println(new
+        // BCryptPasswordEncoder().encode(usuario.getContrasena()));
+        usuario.setContrasena(new BCryptPasswordEncoder().encode(usuario.getContrasena()));
         return repositoryUsuario.save(usuario);
     }
 
-    // login
-    public Usuario verificarCredenciales(String email, String contrasena) {
-        Usuario usuario = repositoryUsuario.findByEmail(email).orElse(null);
-        if (usuario != null && passwordEncoder.matches(contrasena, usuario.getContrasena())) {
-            return usuario;
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Usuario usuario = repositoryUsuario.findByEmail(username);
+        if (usuario != null) {
+            return new CustomUser(usuario);
         }
-        return null;
+        System.out.println("No coincide");
+        throw new UsernameNotFoundException("Usuario no encontrado");
+
     }
+
+    // // login
+    // public Usuario verificarCredenciales(String email, String contrasena) {
+    // Usuario usuario = repositoryUsuario.findByEmail(email);
+    // if (usuario != null && passwordEncoder.matches(contrasena,
+    // usuario.getContrasena())) {
+    // return usuario;
+    // }
+    // return null;
+    // }
 
     // // cambiar estado del usuario
     // public Usuario cambiarEstado(int id, String nuevoEstado) {
