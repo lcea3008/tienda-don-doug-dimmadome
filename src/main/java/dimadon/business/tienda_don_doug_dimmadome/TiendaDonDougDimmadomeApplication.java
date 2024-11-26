@@ -25,7 +25,7 @@ public class TiendaDonDougDimmadomeApplication {
 		System.out.println("RENIEC_API_URL: " + dotenv.get("RENIEC_API_URL"));
 		System.out.println("RENIEC_API_TOKEN: " + dotenv.get("RENIEC_API_TOKEN"));
 		System.out.println("Clave");
-		System.out.println(new BCryptPasswordEncoder().encode("123456"));
+		System.out.println(new BCryptPasswordEncoder().encode("edwin1212"));
 		SpringApplication.run(TiendaDonDougDimmadomeApplication.class, args);
 
 	}

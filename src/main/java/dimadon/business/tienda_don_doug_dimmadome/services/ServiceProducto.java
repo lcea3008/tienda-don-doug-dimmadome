@@ -11,6 +11,7 @@ import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositoryKardex;
 import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositoryProducto;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Kardex;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Producto;
+import dimadon.business.tienda_don_doug_dimmadome.entities.Usuario;
 
 @Service
 public class ServiceProducto {
@@ -19,7 +20,7 @@ public class ServiceProducto {
     RepositoryProducto repositoryProducto;
 
     public ArrayList<Producto> obtenerProducto() {
-        
+
         return (ArrayList<Producto>) repositoryProducto.findAll();
     }
 
@@ -47,18 +48,6 @@ public class ServiceProducto {
         return nuevoProducto;
     }
 
-    // cambiar estado del usuario
-    public Producto cambiarEstado(int id, String nuevoEstado) {
-        Optional<Producto> productoOpt = repositoryProducto.findById(id);
-        if (productoOpt.isPresent()) {
-            Producto producto = productoOpt.get();
-            producto.setEstado(nuevoEstado);
-            return repositoryProducto.save(producto);
-        } else {
-            throw new RuntimeException("Producto no encontrado");
-        }
-    }
-
     // actualizar usuario por id
     public Producto actualizarProducto(int id, Producto productoActualizado) {
         Optional<Producto> productoExistenteOpt = repositoryProducto.findById(id);
@@ -78,8 +67,32 @@ public class ServiceProducto {
         }
     }
 
-    // obtener usuarios activos e inactivos
-    public List<Producto> obtenerProductoPorEstado(String estado) {
+    // camabiar estado del producto
+    public Producto cambiarEstadoProductoPorId(int idProducto, String estado) {
+        if (!estado.equalsIgnoreCase("activo") && !estado.equalsIgnoreCase("inactivo")) {
+            throw new IllegalArgumentException("Estado no válido. Debe ser 'activo' o 'inactivo'.");
+        }
+
+        // Buscar el producto existente
+        Producto productoExistente = repositoryProducto.findById(idProducto)
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con id: " + idProducto));
+
+        // Cambiar el estado
+        productoExistente.setEstado(estado);
+
+        // Guardar los cambios
+        return repositoryProducto.save(productoExistente);
+    }
+
+    //obtener producto por estado
+    public List<Producto> obtenerProductosPorEstado(String estado) {
+        if (!estado.equalsIgnoreCase("activo") && !estado.equalsIgnoreCase("inactivo")) {
+            throw new IllegalArgumentException("Estado no válido. Debe ser 'activo' o 'inactivo'.");
+        }
+    
+        // Obtener productos según el estado
         return repositoryProducto.findByEstado(estado);
     }
+    
+    
 }

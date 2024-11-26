@@ -1,13 +1,10 @@
 package dimadon.business.tienda_don_doug_dimmadome.controllers;
 
 import java.util.ArrayList;
-// import java.util.HashMap;
-// import java.util.List;
-// import java.util.Map;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.http.HttpStatus;
-// import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import dimadon.business.tienda_don_doug_dimmadome.entities.Usuario;
@@ -30,63 +27,20 @@ public class UsuarioController {
         return this.serviceUsuario.guardarUsuario(usuario);
     }
 
-    // @PostMapping("/login")
-    // public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String,
-    // String> loginData) {
-    // String email = loginData.get("email");
-    // String contrasena = loginData.get("contrasena");
+    @PatchMapping("/{id}")
+    public Usuario cambiarEstadoUsuario(@PathVariable("id") int idUsuario, @RequestBody Map<String, String> body) {
+        String nuevoEstado = body.get("estado");
+        return serviceUsuario.cambiarEstadoUsuario(idUsuario, nuevoEstado);
+    }
 
-    // Map<String, Object> response = new HashMap<>();
-    // try {
-    // Usuario usuario = serviceUsuario.verificarCredenciales(email, contrasena);
-    // if (usuario != null) {
-    // response.put("success", true);
-    // response.put("message", "Login exitoso");
-    // response.put("tipoUsuarioId", usuario.getTipoUsuario().getIdTipoUsuario());
-    // // Solo el ID del
-    // // tipoUsuario
-    // return ResponseEntity.ok(response);
-    // } else {
-    // response.put("success", false);
-    // response.put("message", "Credenciales incorrectas");
-    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    // }
-    // } catch (Exception e) {
-    // response.put("success", false);
-    // response.put("message", "Error en el servidor. Por favor intenta más
-    // tarde.");
-    // return
-    // ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    // }
-    // }
+    @PutMapping("/{id}/actualizar")
+    public Usuario actualizarUsuario(@PathVariable("id") int idUsuario, @RequestBody Usuario usuario) {
+        return serviceUsuario.actualizarUsuario(idUsuario, usuario);
+    }
 
-    // // cambiar estado del usuario
-    // @PutMapping("/{id}/estado")
-    // public ResponseEntity<Usuario> cambiarEstado(@PathVariable("id") int id,
-    // @RequestBody Map<String, String> estadoData) {
-    // String nuevoEstado = estadoData.get("estado");
-    // Usuario usuarioActualizado = serviceUsuario.cambiarEstado(id, nuevoEstado);
-    // return new ResponseEntity<>(usuarioActualizado, HttpStatus.OK);
-    // }
-
-    // // actualiza segun el id
-    // @PutMapping("/{id}")
-    // public ResponseEntity<Usuario> actualizarUsuario(@PathVariable("id") int id,
-    // @RequestBody Usuario usuario) {
-    // Usuario usuarioActualizado = serviceUsuario.actualizarUsuario(id, usuario);
-    // if (usuarioActualizado != null) {
-    // return ResponseEntity.ok(usuarioActualizado);
-    // } else {
-    // return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    // }
-    // }
-
-    // // obtener usuarios activos e inactivos
-    // @GetMapping("/estado/{estado}")
-    // public ResponseEntity<List<Usuario>> obtenerUsuariosPorEstado(@PathVariable
-    // String estado) {
-    // List<Usuario> usuarios = serviceUsuario.obtenerUsuariosPorEstado(estado);
-    // return ResponseEntity.ok(usuarios);
-    // }
+    @GetMapping("/estado/{estado}")
+    public List<Usuario> obtenerUsuariosPorEstado(@PathVariable("estado") String estado) {
+        return serviceUsuario.obtenerUsuariosPorEstado(estado);
+    }
 
 }
