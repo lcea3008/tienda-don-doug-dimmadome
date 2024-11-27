@@ -3,6 +3,8 @@ package dimadon.business.tienda_don_doug_dimmadome.controllers;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,12 +22,26 @@ public class CategoriaController {
     ServiceCategoria serviceCategoria;
 
     @GetMapping("/obtener")
-    public ArrayList<Categoria> obtenerCategoria() {
-        return serviceCategoria.obtnerCategoria();
+    public ResponseEntity<?> obtenerCategoria() {
+        try {
+            ArrayList<Categoria> categorias = serviceCategoria.obtnerCategoria();
+            return ResponseEntity.ok(categorias);
+        } catch (Exception e) {
+            // Manejo del error
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener las categorías: " + e.getMessage());
+        }
     }
 
     @PostMapping("/insertar")
-    public Categoria guardarCategoria(@RequestBody Categoria categoria) {
-        return this.serviceCategoria.insertarCategoria(categoria);
+    public ResponseEntity<?> guardarCategoria(@RequestBody Categoria categoria) {
+        try {
+            Categoria nuevaCategoria = this.serviceCategoria.insertarCategoria(categoria);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCategoria);
+        } catch (Exception e) {
+            // Manejo del error
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al insertar la categoría: " + e.getMessage());
+        }
     }
 }

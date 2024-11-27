@@ -25,21 +25,42 @@ public class ClienteController {
     ServiceCliente serviceCliente;
 
     @GetMapping("/obtener")
-    public ArrayList<Cliente> obtenerClientes() {
-        return serviceCliente.obtenerClientes();
+    public ResponseEntity<?> obtenerClientes() {
+        try {
+            ArrayList<Cliente> clientes = serviceCliente.obtenerClientes();
+            return ResponseEntity.ok(clientes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener los clientes: " + e.getMessage());
+        }
     }
 
     @PostMapping("/insertar")
-    public Cliente guardarCliente(@RequestBody Cliente cliente) {
-        return serviceCliente.guardarCliente(cliente);
+    public ResponseEntity<?> guardarCliente(@RequestBody Cliente cliente) {
+        try {
+            Cliente nuevoCliente = serviceCliente.guardarCliente(cliente);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoCliente);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al insertar el cliente: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}/estado")
-    public ResponseEntity<Cliente> cambiarEstado(@PathVariable("id") int id,
+    public ResponseEntity<?> cambiarEstado(@PathVariable("id") int id,
             @RequestBody Map<String, String> estadoData) {
-        String nuevoEstado = estadoData.get("estado");
-        Cliente clienteActualizado = serviceCliente.cambiarEstado(id, nuevoEstado);
-        return new ResponseEntity<>(clienteActualizado, HttpStatus.OK);
+        try {
+            String nuevoEstado = estadoData.get("estado");
+            if (nuevoEstado == null || nuevoEstado.isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("El estado proporcionado no es válido.");
+            }
+            Cliente clienteActualizado = serviceCliente.cambiarEstado(id, nuevoEstado);
+            return ResponseEntity.ok(clienteActualizado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al cambiar el estado del cliente: " + e.getMessage());
+        }
     }
 
 }
