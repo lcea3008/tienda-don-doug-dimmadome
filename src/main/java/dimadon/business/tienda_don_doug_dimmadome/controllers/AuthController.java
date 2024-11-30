@@ -5,7 +5,12 @@ import dimadon.business.tienda_don_doug_dimmadome.entities.Usuario;
 import dimadon.business.tienda_don_doug_dimmadome.exceptions.CredencialesIncorrectasException;
 import dimadon.business.tienda_don_doug_dimmadome.exceptions.UsuarioInactivoException;
 import dimadon.business.tienda_don_doug_dimmadome.services.ServiceUsuario;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,40 +35,47 @@ public class AuthController {
     private ServiceUsuario serviceUsuario;
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Map<String, String> loginRequest) {
+    public ResponseEntity<String> login(@RequestBody Map<String, String> loginRequest, HttpServletResponse response) {
         String email = loginRequest.get("email");
         String contrasena = loginRequest.get("contrasena");
 
-        Authentication authentication;
+        System.out.println("Intento de inicio de sesión con email: " + email + " y contraseña: " + contrasena);
+
         try {
-            // Intentar autenticar al usuario con las credenciales proporcionadas
-            authentication = authenticationManager.authenticate(
+            
+            authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, contrasena));
+
+            Usuario usuario = serviceUsuario.obtenerUsuarioPorEmail(email);
+
+            if (usuario == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario no encontrado");
+            }
+
+            if (!"activo".equals(usuario.getEstado())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("El usuario está inactivo");
+            }
+
+            
+            String token = jwtTokenProvider.generateToken(email);
+
+            
+            System.out.println("Token generado para el usuario " + email + ": " + token);
+
+            // Configurar la cookie con el token
+            Cookie cookie = new Cookie("token", token);
+            // cookie.setHttpOnly(true);
+            cookie.setSecure(false); 
+            cookie.setPath("/");
+            cookie.setMaxAge(60 * 60 * 24); 
+            response.addCookie(cookie);
+
+            return ResponseEntity.ok("Inicio de sesión exitoso");
         } catch (BadCredentialsException e) {
-            // Si las credenciales son incorrectas, lanzar CredencialesIncorrectasException
-            throw new CredencialesIncorrectasException("Usuario o contraseña incorrecta");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario o contraseña incorrecta");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor");
         }
-
-        // Intentar obtener el usuario desde la base de datos por su email
-        Usuario usuario = serviceUsuario.obtenerUsuarioPorEmail(email);
-        if (usuario == null) {
-            // Si el usuario no existe, lanzar una excepción
-            throw new CredencialesIncorrectasException("Usuario no encontrado");
-        }
-
-        // Verificar si el usuario está activo
-        if (!"activo".equals(usuario.getEstado())) {
-            // Si el usuario no está activo, lanzar UsuarioInactivoException
-            throw new UsuarioInactivoException("El usuario está inactivo");
-        }
-
-        // Si el usuario está activo, generar el token
-        String token = jwtTokenProvider.generateToken(email);
-
-        // Devolver el token en la respuesta
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        return response;
     }
 
     @PostMapping("/registro")

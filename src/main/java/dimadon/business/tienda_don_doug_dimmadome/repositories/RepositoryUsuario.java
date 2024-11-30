@@ -1,4 +1,4 @@
-package dimadon.business.tienda_don_doug_dimmadome.Repository;
+package dimadon.business.tienda_don_doug_dimmadome.repositories;
 
 import java.util.List;
 import java.util.Optional;

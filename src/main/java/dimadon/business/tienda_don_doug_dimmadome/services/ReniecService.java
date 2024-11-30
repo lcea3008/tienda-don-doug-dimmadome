@@ -16,8 +16,8 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositoryCliente;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Cliente;
+import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositoryCliente;
 
 @Service
 public class ReniecService {

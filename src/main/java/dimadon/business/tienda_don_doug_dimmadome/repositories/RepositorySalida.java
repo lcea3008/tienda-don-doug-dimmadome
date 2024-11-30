@@ -1,4 +1,4 @@
-package dimadon.business.tienda_don_doug_dimmadome.Repository;
+package dimadon.business.tienda_don_doug_dimmadome.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

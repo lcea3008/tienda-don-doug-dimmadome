@@ -8,14 +8,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositoryDetalleSalida;
-import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositoryKardex;
-import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositoryProducto;
-import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositorySalida;
-
 import dimadon.business.tienda_don_doug_dimmadome.entities.DetalleSalida;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Kardex;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Producto;
+import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositoryDetalleSalida;
+import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositoryKardex;
+import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositoryProducto;
+import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositorySalida;
 import dimadon.business.tienda_don_doug_dimmadome.values.Movimientos;
 import jakarta.transaction.Transactional;
 

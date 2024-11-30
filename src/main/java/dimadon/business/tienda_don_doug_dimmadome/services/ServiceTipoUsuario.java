@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositoryTipoUsuario;
 import dimadon.business.tienda_don_doug_dimmadome.entities.TipoUsuario;
+import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositoryTipoUsuario;
 
 @Service
 public class ServiceTipoUsuario {

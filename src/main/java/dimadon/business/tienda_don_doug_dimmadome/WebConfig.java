@@ -17,7 +17,7 @@ public class WebConfig {
                         .allowedOrigins("http://localhost:5173", "https://tienda-don-doug-dimmadome.vercel.app")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true);
+                        .allowCredentials(true); // Permitir credenciales para CORS
             }
         };
     }

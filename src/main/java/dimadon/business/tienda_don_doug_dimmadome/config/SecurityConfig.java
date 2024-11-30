@@ -1,5 +1,6 @@
 package dimadon.business.tienda_don_doug_dimmadome.config;
 
+import dimadon.business.tienda_don_doug_dimmadome.services.ServiceUsuario;
 import dimadon.business.tienda_don_doug_dimmadome.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,18 +21,18 @@ public class SecurityConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
-    private dimadon.business.tienda_don_doug_dimmadome.services.ServiceUsuario userDetailsService;
+    private ServiceUsuario userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf().disable()
+                .cors().and()
                 .authorizeRequests()
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/auth/registro").authenticated()
                 .anyRequest().authenticated()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Sin estado
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

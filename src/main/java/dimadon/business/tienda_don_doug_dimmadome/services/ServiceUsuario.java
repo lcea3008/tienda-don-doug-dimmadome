@@ -13,8 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositoryUsuario;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Usuario;
+import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositoryUsuario;
 
 @Service
 public class ServiceUsuario implements UserDetailsService {

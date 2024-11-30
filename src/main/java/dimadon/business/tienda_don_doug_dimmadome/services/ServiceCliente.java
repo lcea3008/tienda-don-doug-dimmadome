@@ -7,8 +7,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dimadon.business.tienda_don_doug_dimmadome.Repository.RepositoryCliente;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Cliente;
+import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositoryCliente;
 
 @Service
 public class ServiceCliente {
