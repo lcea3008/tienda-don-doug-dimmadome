@@ -54,11 +54,11 @@ public class AuthController {
             String token = jwtTokenProvider.generateToken(email, usuario.getTipoUsuario().getIdTipoUsuario());
 
             // Configurar la cookie para el access token
-            Cookie accessTokenCookie = new Cookie("access_token", token);
-            accessTokenCookie.setHttpOnly(true);
+            Cookie accessTokenCookie = new Cookie("token", token);
+            accessTokenCookie.setHttpOnly(false);
             accessTokenCookie.setSecure(false); // Establecer en true si usas HTTPS
             accessTokenCookie.setPath("/");
-            accessTokenCookie.setMaxAge(60 * 5); // 5 minutos
+            accessTokenCookie.setMaxAge(60 * 10); // 5 minutos
             response.addCookie(accessTokenCookie);
 
             // Responder con un mensaje de éxito, sin mostrar los tokens en el cuerpo

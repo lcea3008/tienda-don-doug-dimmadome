@@ -33,11 +33,9 @@ public class DetalleSalida {
     private double costoUnitario;
 
     @Column(nullable = false)
-    private double total;
-
-    @Column(nullable = false)
     private String descripcion;
 
+    // Getters y Setters
     public int getIdDetalle() {
         return idDetalle;
     }
@@ -76,14 +74,6 @@ public class DetalleSalida {
 
     public void setCostoUnitario(double costoUnitario) {
         this.costoUnitario = costoUnitario;
-    }
-
-    public double getTotal() {
-        return total;
-    }
-
-    public void setTotal(double total) {
-        this.total = total;
     }
 
     public String getDescripcion() {
