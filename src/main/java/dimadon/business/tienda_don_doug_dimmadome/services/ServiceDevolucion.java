@@ -43,16 +43,20 @@ public class ServiceDevolucion {
         String fechaFormateada = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         if (devolucion.getTipoDevolucion().getIdTipoDevolucion() == 1) {
 
+            int nuevoStock = producto.getStock() - devolucion.getCantidad();
+            producto.setStock(nuevoStock);
+            repositoryProducto.save(producto);
+
             // añadir a tabla de kardex
             Kardex kardex = new Kardex();
             kardex.setProducto(producto);
             kardex.setNombreProducto(devolucion.getProducto().getNombre());
             kardex.setFecha(fechaFormateada);
-            kardex.setTipoOperacion("Devolución" + devolucion.getTipoDevolucion().getNombre());
-            kardex.setDescripcion(devolucion.getDescripcion());
-            kardex.setCantidadSalida(devolucion.getCantidad());
-            kardex.setCostoUnitarioSalida(devolucion.getProducto().getPrecioUnitario());
-            kardex.setCostoTotalSalida(devolucion.getCantidad() * devolucion.getProducto().getPrecioUnitario());
+            kardex.setTipoOperacion("Entrada");
+            kardex.setDescripcion(devolucion.getDescripcion() + " - " + devolucion.getTipoDevolucion().getNombre());
+            kardex.setCantidadEntrada(devolucion.getCantidad() * -1);
+            kardex.setCostoUnitarioEntrada(devolucion.getProducto().getPrecioUnitario());
+            kardex.setCostoTotalEntrada(devolucion.getCantidad() * devolucion.getProducto().getPrecioUnitario() * -1);
             kardex.setCantidadSaldo(devolucion.getProducto().getStock());
             kardex.setCostoUnitarioSaldo(devolucion.getProducto().getPrecioUnitario());
             kardex.setCostoTotalSaldo(
@@ -69,11 +73,11 @@ public class ServiceDevolucion {
             kardex.setProducto(producto);
             kardex.setNombreProducto(devolucion.getProducto().getNombre());
             kardex.setFecha(fechaFormateada);
-            kardex.setTipoOperacion("Devolución" + devolucion.getTipoDevolucion().getNombre());
-            kardex.setDescripcion(devolucion.getDescripcion());
-            kardex.setCantidadEntrada(devolucion.getCantidad());
-            kardex.setCostoUnitarioEntrada(devolucion.getProducto().getPrecioUnitario());
-            kardex.setCostoTotalEntrada(devolucion.getCantidad() * devolucion.getProducto().getPrecioUnitario());
+            kardex.setTipoOperacion("Salida");
+            kardex.setDescripcion(devolucion.getDescripcion() + " - " + devolucion.getTipoDevolucion().getNombre());
+            kardex.setCantidadSalida(devolucion.getCantidad() * -1);
+            kardex.setCostoUnitarioSalida(devolucion.getProducto().getPrecioUnitario());
+            kardex.setCostoTotalSalida(devolucion.getCantidad() * devolucion.getProducto().getPrecioUnitario());
             kardex.setCantidadSaldo(devolucion.getProducto().getStock());
             kardex.setCostoUnitarioSaldo(devolucion.getProducto().getPrecioUnitario());
             kardex.setCostoTotalSaldo(
