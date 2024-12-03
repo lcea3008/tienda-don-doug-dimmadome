@@ -11,7 +11,7 @@ import dimadon.business.tienda_don_doug_dimmadome.entities.Usuario;
 import dimadon.business.tienda_don_doug_dimmadome.services.ServiceUsuario;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/admin")
 public class UsuarioController {
 
     @Autowired

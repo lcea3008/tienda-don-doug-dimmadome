@@ -1,10 +1,13 @@
 package dimadon.business.tienda_don_doug_dimmadome.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,10 +40,16 @@ public class ServiceUsuario implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // Cargar el usuario por email
         Usuario usuario = repositoryUsuario.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        return new User(usuario.getEmail(), usuario.getContrasena(), new ArrayList<>());
+        // Determinar el rol según el ID del tipo de usuario
+        String roleName = usuario.getTipoUsuario().getIdTipoUsuario() == 1 ? "ROLE_ADMIN" : "ROLE_VENDEDOR";
+        GrantedAuthority authority = new SimpleGrantedAuthority(roleName);
+
+        // Devolver el usuario con las credenciales y el rol
+        return new User(usuario.getEmail(), usuario.getContrasena(), Collections.singletonList(authority));
     }
 
     // obtener usuario por email

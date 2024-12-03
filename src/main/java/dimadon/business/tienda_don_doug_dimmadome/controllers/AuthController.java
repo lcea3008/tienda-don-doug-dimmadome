@@ -2,8 +2,6 @@ package dimadon.business.tienda_don_doug_dimmadome.controllers;
 
 import dimadon.business.tienda_don_doug_dimmadome.security.JwtTokenProvider;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Usuario;
-import dimadon.business.tienda_don_doug_dimmadome.exceptions.CredencialesIncorrectasException;
-import dimadon.business.tienda_don_doug_dimmadome.exceptions.UsuarioInactivoException;
 import dimadon.business.tienda_don_doug_dimmadome.services.ServiceUsuario;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,11 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -42,10 +36,11 @@ public class AuthController {
         System.out.println("Intento de inicio de sesión con email: " + email + " y contraseña: " + contrasena);
 
         try {
-            
+            // Autenticación del usuario con las credenciales proporcionadas
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, contrasena));
 
+            // Obtener el usuario desde la base de datos
             Usuario usuario = serviceUsuario.obtenerUsuarioPorEmail(email);
 
             if (usuario == null) {
@@ -56,21 +51,19 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("El usuario está inactivo");
             }
 
-            
-            String token = jwtTokenProvider.generateToken(email);
+            String token = jwtTokenProvider.generateToken(email, usuario.getTipoUsuario().getIdTipoUsuario());
 
-            
-            System.out.println("Token generado para el usuario " + email + ": " + token);
+            // Configurar la cookie para el access token
+            Cookie accessTokenCookie = new Cookie("access_token", token);
+            accessTokenCookie.setHttpOnly(true);
+            accessTokenCookie.setSecure(false); // Establecer en true si usas HTTPS
+            accessTokenCookie.setPath("/");
+            accessTokenCookie.setMaxAge(60 * 5); // 5 minutos
+            response.addCookie(accessTokenCookie);
 
-            // Configurar la cookie con el token
-            Cookie cookie = new Cookie("token", token);
-            // cookie.setHttpOnly(true);
-            cookie.setSecure(false); 
-            cookie.setPath("/");
-            cookie.setMaxAge(60 * 60 * 24); 
-            response.addCookie(cookie);
-
+            // Responder con un mensaje de éxito, sin mostrar los tokens en el cuerpo
             return ResponseEntity.ok("Inicio de sesión exitoso");
+
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario o contraseña incorrecta");
         } catch (Exception e) {
