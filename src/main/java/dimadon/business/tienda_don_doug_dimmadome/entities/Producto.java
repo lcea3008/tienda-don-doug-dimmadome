@@ -34,8 +34,9 @@ public class Producto {
     @JoinColumn(name = "id_categoria", nullable = false)
     private Categoria categoria;
 
-    @Column(nullable = false)
-    private String descripcion;
+    @ManyToOne
+    @JoinColumn(name = "id_unidad_medida", nullable = false)
+    private UnidadMedida unidadMedida;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(10) DEFAULT 'activo'")
     private String estado = "activo";
@@ -90,12 +91,12 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public UnidadMedida getUnidadMedida() {
+        return unidadMedida;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setUnidadMedida(UnidadMedida unidadMedida) {
+        this.unidadMedida = unidadMedida;
     }
 
     public String getEstado() {

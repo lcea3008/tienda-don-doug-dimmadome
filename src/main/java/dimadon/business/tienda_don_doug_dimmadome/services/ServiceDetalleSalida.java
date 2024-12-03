@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import dimadon.business.tienda_don_doug_dimmadome.entities.DetalleSalida;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Kardex;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Producto;
+import dimadon.business.tienda_don_doug_dimmadome.entities.Salida;
 import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositoryDetalleSalida;
 import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositoryKardex;
 import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositoryProducto;
@@ -39,7 +40,22 @@ public class ServiceDetalleSalida {
     }
 
     @Transactional
-    public List<DetalleSalida> registrarDetallesSalidaConKardex(List<DetalleSalida> detallesSalida) {
+    public List<DetalleSalida> registrarDetallesSalidaConKardex(List<DetalleSalida> detallesSalida,
+            String descripcionGeneral, Salida salida) {
+        // Validar stock para todos los detalles antes de realizar cualquier operación
+        for (DetalleSalida detalleSalida : detallesSalida) {
+            Producto producto = repositoryProducto.findById(detalleSalida.getProducto().getIdProducto())
+                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado en la base de datos"));
+
+            if (producto.getStock() < detalleSalida.getCantidad()) {
+                throw new IllegalArgumentException(
+                        "Stock insuficiente para el producto: " + producto.getNombre() +
+                                ". Disponible: " + producto.getStock() +
+                                ", Solicitado: " + detalleSalida.getCantidad());
+            }
+        }
+
+        // Si la validación anterior pasa, procedemos a registrar los detalles
         List<DetalleSalida> detallesGuardados = new ArrayList<>();
 
         for (DetalleSalida detalleSalida : detallesSalida) {
@@ -47,6 +63,8 @@ public class ServiceDetalleSalida {
                     .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado en la base de datos"));
 
             detalleSalida.setProducto(producto);
+            detalleSalida.setSalida(salida);
+            detalleSalida.setDescripcion(descripcionGeneral);
 
             DetalleSalida savedDetalleSalida = repositoryDetalleSalida.save(detalleSalida);
 
@@ -62,14 +80,13 @@ public class ServiceDetalleSalida {
             kardex.setNombreProducto(detalleSalida.getProducto().getNombre());
             kardex.setFecha(fechaFormateada);
             kardex.setTipoOperacion(Movimientos.SALIDA);
-            kardex.setDescripcion(detalleSalida.getDescripcion());
+            kardex.setDescripcion(descripcionGeneral);
             kardex.setCantidadSalida(detalleSalida.getCantidad());
             kardex.setCostoUnitarioSalida(detalleSalida.getCostoUnitario());
             kardex.setCostoTotalSalida(detalleSalida.getCantidad() * detalleSalida.getCostoUnitario());
-            kardex.setCantidadSaldo(detalleSalida.getProducto().getStock());
+            kardex.setCantidadSaldo(nuevoStock);
             kardex.setCostoUnitarioSaldo(detalleSalida.getProducto().getPrecioUnitario());
-            kardex.setCostoTotalSaldo(
-                    detalleSalida.getProducto().getStock() * detalleSalida.getProducto().getPrecioUnitario());
+            kardex.setCostoTotalSaldo(nuevoStock * detalleSalida.getProducto().getPrecioUnitario());
 
             repositoryKardex.save(kardex);
             detallesGuardados.add(savedDetalleSalida);

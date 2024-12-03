@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import dimadon.business.tienda_don_doug_dimmadome.dto.DetalleEntradaRequest;
 import dimadon.business.tienda_don_doug_dimmadome.entities.DetalleEntrada;
 import dimadon.business.tienda_don_doug_dimmadome.services.ServiceDetalleEntrada;
 
@@ -25,8 +27,10 @@ public class DetalleEntradaController {
     }
 
     @PostMapping("/insertar")
-    public List<DetalleEntrada> insertarDetallesEntrada(@RequestBody List<DetalleEntrada> detallesEntrada) {
-        return serviceDetalleEntrada.registrarDetallesEntradaConKardex(detallesEntrada);
+    public List<DetalleEntrada> insertarDetallesEntrada(@RequestBody DetalleEntradaRequest request) {
+        // Llamamos al servicio pasando los detalles de entrada, entrada y descripción
+        return serviceDetalleEntrada.registrarDetallesEntradaConKardex(request.getDetallesEntrada(),
+                request.getEntrada(), request.getDescripcion());
     }
 
     // obtener ultimo is de entrada

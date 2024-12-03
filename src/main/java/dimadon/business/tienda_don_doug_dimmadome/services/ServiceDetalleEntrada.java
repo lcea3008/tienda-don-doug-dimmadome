@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dimadon.business.tienda_don_doug_dimmadome.entities.DetalleEntrada;
+import dimadon.business.tienda_don_doug_dimmadome.entities.Entrada;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Kardex;
 import dimadon.business.tienda_don_doug_dimmadome.entities.Producto;
 import dimadon.business.tienda_don_doug_dimmadome.repositories.RepositoryDetalleEntrada;
@@ -37,9 +38,23 @@ public class ServiceDetalleEntrada {
         return ultimoId; // Retorna el último ID de salida
     }
 
-    @Transactional      
+    @Transactional
+    public List<DetalleEntrada> registrarDetallesEntradaConKardex(List<DetalleEntrada> detallesEntrada, Entrada entrada,
+            String descripcion) {
+        // Validar stock para todos los detalles antes de realizar cualquier operación
+        for (DetalleEntrada detalleEntrada : detallesEntrada) {
+            Producto producto = productoRepository.findById(detalleEntrada.getProducto().getIdProducto())
+                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado en la base de datos"));
 
-    public List<DetalleEntrada> registrarDetallesEntradaConKardex(List<DetalleEntrada> detallesEntrada) {
+            // Verificar que la cantidad de entrada sea positiva, en caso de no, se lanzará
+            // un error
+            if (detalleEntrada.getCantidad() <= 0) {
+                throw new IllegalArgumentException(
+                        "La cantidad de entrada para el producto " + producto.getNombre() + " debe ser mayor a cero.");
+            }
+        }
+
+        // Si la validación anterior pasa, procedemos a registrar los detalles
         List<DetalleEntrada> detallesGuardados = new ArrayList<>();
 
         for (DetalleEntrada detalleEntrada : detallesEntrada) {
@@ -47,16 +62,20 @@ public class ServiceDetalleEntrada {
                     .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado en la base de datos"));
 
             detalleEntrada.setProducto(producto);
+            detalleEntrada.setEntrada(entrada);
+            detalleEntrada.setDescripcion(descripcion);
 
-            DetalleEntrada savedDetalleEntrada = repositoryDetalleEntrada.save(detalleEntrada);
-
+            // Actualizar la cantidad de stock del producto
             int nuevoStock = producto.getStock() + detalleEntrada.getCantidad();
             producto.setStock(nuevoStock);
             productoRepository.save(producto);
 
+            // Registrar el detalle de entrada en la base de datos
+            DetalleEntrada savedDetalleEntrada = repositoryDetalleEntrada.save(detalleEntrada);
+
+            // Crear el registro en Kardex
             String fechaFormateada = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-            // Crear registro en Kardex
             Kardex kardex = new Kardex();
             kardex.setProducto(producto);
             kardex.setNombreProducto(producto.getNombre());

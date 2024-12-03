@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import dimadon.business.tienda_don_doug_dimmadome.dto.DetallesSalidaRequest;
 import dimadon.business.tienda_don_doug_dimmadome.entities.DetalleSalida;
 import dimadon.business.tienda_don_doug_dimmadome.services.ServiceDetalleSalida;
 
@@ -25,8 +27,11 @@ public class DetalleSalidaController {
     }
 
     @PostMapping("/insertar")
-    public List<DetalleSalida> insertarDetallesSalida(@RequestBody List<DetalleSalida> detallesSalida) {
-        return serviceDetalleSalida.registrarDetallesSalidaConKardex(detallesSalida);
+    public List<DetalleSalida> insertarDetallesSalida(@RequestBody DetallesSalidaRequest detallesSalidaRequest) {
+        return serviceDetalleSalida.registrarDetallesSalidaConKardex(
+                detallesSalidaRequest.getDetallesSalida(),
+                detallesSalidaRequest.getDescripcion(),
+                detallesSalidaRequest.getSalida());
     }
 
     // obtener ultimo is de salida
