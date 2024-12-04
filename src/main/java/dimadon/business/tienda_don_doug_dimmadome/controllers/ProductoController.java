@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dimadon.business.tienda_don_doug_dimmadome.entities.Producto;
+import dimadon.business.tienda_don_doug_dimmadome.entities.Usuario;
 import dimadon.business.tienda_don_doug_dimmadome.services.ServiceProducto;
 
 @RestController
@@ -48,10 +49,10 @@ public class ProductoController {
         }
     }
 
-    @PatchMapping("/{id}/estado")
-    public Producto cambiarEstadoProductoPorId(@PathVariable("id") int idProducto,
-            @RequestParam("estado") String estado) {
-        return serviceProducto.cambiarEstadoProductoPorId(idProducto, estado);
+    @PatchMapping("/{id}")
+    public Producto cambiarEstadoProducto(@PathVariable("id") int idProducto, @RequestBody Map<String, String> body) {
+        String nuevoEstado = body.get("estado");
+        return serviceProducto.cambiarEstadoProducto(idProducto, nuevoEstado);
     }
 
     @GetMapping("/estado")

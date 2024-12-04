@@ -13,6 +13,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -29,10 +31,11 @@ public class AuthController {
     private ServiceUsuario serviceUsuario;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Map<String, String> loginRequest, HttpServletResponse response) {
+    public ResponseEntity<HashMap<String, Object>> login(@RequestBody Map<String, String> loginRequest,
+            HttpServletResponse response) {
         String email = loginRequest.get("email");
         String contrasena = loginRequest.get("contrasena");
-
+        HashMap<String, Object> res = new HashMap<>();
         System.out.println("Intento de inicio de sesión con email: " + email + " y contraseña: " + contrasena);
 
         try {
@@ -44,30 +47,36 @@ public class AuthController {
             Usuario usuario = serviceUsuario.obtenerUsuarioPorEmail(email);
 
             if (usuario == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario no encontrado");
+                res.put("message", "Usuario no encontrado");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
             }
 
             if (!"activo".equals(usuario.getEstado())) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("El usuario está inactivo");
+                res.put("message", "El usuario está inactivo");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(res);
             }
 
             String token = jwtTokenProvider.generateToken(email, usuario.getTipoUsuario().getIdTipoUsuario());
-
             // Configurar la cookie para el access token
-            Cookie accessTokenCookie = new Cookie("token", token);
-            accessTokenCookie.setHttpOnly(false);
-            accessTokenCookie.setSecure(false); // Establecer en true si usas HTTPS
-            accessTokenCookie.setPath("/");
-            accessTokenCookie.setMaxAge(60 * 10); // 5 minutos
-            response.addCookie(accessTokenCookie);
+            Cookie tokenCookie = new Cookie("token", token);
+            tokenCookie.setHttpOnly(false);
+            tokenCookie.setSecure(true); // Establecer en true si usas HTTPS
+            tokenCookie.setPath("/");
+            tokenCookie.setMaxAge(60 * 10); // 5 minutos
+            response.addCookie(tokenCookie);
+            res.put("token", token);
+            res.put("usuario", usuario);
+
+            System.out.println(res);
 
             // Responder con un mensaje de éxito, sin mostrar los tokens en el cuerpo
-            return ResponseEntity.ok("Inicio de sesión exitoso");
-
+            return ResponseEntity.status(HttpStatus.OK).body(res);
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario o contraseña incorrecta");
+            res.put("message", "Usuario o contraseña incorrecta");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor");
+            res.put("message", "Error interno del servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
         }
     }
 

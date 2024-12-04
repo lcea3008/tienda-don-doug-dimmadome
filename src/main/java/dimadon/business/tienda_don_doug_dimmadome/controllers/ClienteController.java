@@ -46,6 +46,7 @@ public class ClienteController {
         }
     }
 
+    // Cambiar estado de un cliente
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> cambiarEstado(@PathVariable("id") int id,
             @RequestBody Map<String, String> estadoData) {

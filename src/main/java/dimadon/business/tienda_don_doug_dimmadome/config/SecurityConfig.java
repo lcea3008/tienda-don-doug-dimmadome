@@ -31,29 +31,35 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(authz -> authz // Nueva forma de autorizar peticiones
                                                 .requestMatchers("/auth/**").permitAll() // Público
                                                 .requestMatchers("/categoria/obtener**", "/categoria/insertar**",
-                                                                "/cliente/insertar**",
+                                                                "/cliente//{id}/estado**",
                                                                 "/detalleEntrada/obtener**",
                                                                 "/detalleEntrada/insertar**",
                                                                 "/detalleSalida/obtener**",
                                                                 "/devolucion/obtener**",
                                                                 "/entrada/obtener**", "/entrada/insertar**",
                                                                 "/kardex/obtener**", "/kardex/insertar**",
-                                                                "/producto/insertar**",
+                                                                "/producto/insertar**", "/producto/{id}**",
+                                                                "/producto/{id}/estado**", "/producto/estado**",
                                                                 "/proveedor/obtener**", "/proveedor/insertar**",
                                                                 "/salida/obtener**",
                                                                 "tipoDevolucion/obtener**",
                                                                 "/tipoDevolucion/insertar**",
-                                                                "tipoPago/obtener**", "/tipoPago/insertar**",
+                                                                "/tipoPago/insertar**",
                                                                 "/tipoUsuario/obtener**", "/tipoUsuario/insertar**",
                                                                 "/unidadMedida/insertar**",
-                                                                "/usuario/obtener**", "/usuario/insertar**")
+                                                                "/usuario/obtener**", "/usuario/insertar**",
+                                                                "/usuario/{id}**", "/usuario/{id}/actualizar**",
+                                                                "/usuario/estado/{estado}**")
                                                 .hasAnyRole("ADMIN")
                                                 .requestMatchers("/producto/obtener/**",
                                                                 "/cliente/obtener/**",
+                                                                "/cliente/insertar**",
                                                                 "/devolucion/insertar/**",
                                                                 "/detalleSalida/insertar/**",
                                                                 "/unidadMedida/obtener**",
-                                                                "/salida/insertar**")
+                                                                "tipoPago/obtener**",
+                                                                "/salida/insertar**",
+                                                                "/api/reniec/dni**")
                                                 .hasAnyRole("ADMIN", "VENDEDOR")
                                                 .anyRequest().hasRole("ADMIN") // Por defecto, solo ADMIN
                                 )

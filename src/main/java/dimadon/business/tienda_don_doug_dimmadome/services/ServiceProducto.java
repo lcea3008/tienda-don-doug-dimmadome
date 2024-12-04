@@ -68,31 +68,22 @@ public class ServiceProducto {
     }
 
     // camabiar estado del producto
-    public Producto cambiarEstadoProductoPorId(int idProducto, String estado) {
-        if (!estado.equalsIgnoreCase("activo") && !estado.equalsIgnoreCase("inactivo")) {
-            throw new IllegalArgumentException("Estado no válido. Debe ser 'activo' o 'inactivo'.");
-        }
-
-        // Buscar el producto existente
-        Producto productoExistente = repositoryProducto.findById(idProducto)
+    public Producto cambiarEstadoProducto(int idProducto, String nuevoEstado) {
+        Producto producto = repositoryProducto.findById(idProducto)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con id: " + idProducto));
 
-        // Cambiar el estado
-        productoExistente.setEstado(estado);
-
-        // Guardar los cambios
-        return repositoryProducto.save(productoExistente);
+        producto.setEstado(nuevoEstado);
+        return repositoryProducto.save(producto);
     }
 
-    //obtener producto por estado
+    // obtener producto por estado
     public List<Producto> obtenerProductosPorEstado(String estado) {
         if (!estado.equalsIgnoreCase("activo") && !estado.equalsIgnoreCase("inactivo")) {
             throw new IllegalArgumentException("Estado no válido. Debe ser 'activo' o 'inactivo'.");
         }
-    
+
         // Obtener productos según el estado
         return repositoryProducto.findByEstado(estado);
     }
-    
-    
+
 }
