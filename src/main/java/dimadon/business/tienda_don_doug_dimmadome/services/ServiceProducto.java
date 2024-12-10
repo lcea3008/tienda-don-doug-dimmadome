@@ -19,13 +19,14 @@ public class ServiceProducto {
     @Autowired
     RepositoryProducto repositoryProducto;
 
+    @Autowired
+    RepositoryKardex repositoryKardex;
+
     public ArrayList<Producto> obtenerProducto() {
 
         return (ArrayList<Producto>) repositoryProducto.findAll();
     }
 
-    @Autowired
-    RepositoryKardex repositoryKardex;
 
     public Producto insertarProducto(Producto producto) {
         // Insertar el producto

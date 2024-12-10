@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -56,20 +57,26 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(res);
             }
 
+            // Generar el token
             String token = jwtTokenProvider.generateToken(email, usuario.getTipoUsuario().getIdTipoUsuario());
+
             // Configurar la cookie para el access token
-            Cookie tokenCookie = new Cookie("token", token);
-            tokenCookie.setHttpOnly(false);
-            tokenCookie.setSecure(true); // Establecer en true si usas HTTPS
-            tokenCookie.setPath("/");
-            tokenCookie.setMaxAge(60 * 10); // 5 minutos
-            response.addCookie(tokenCookie);
-            res.put("token", token);
-            res.put("usuario", usuario);
+            ResponseCookie tokenCookie = ResponseCookie
+                    .from("token")
+                    .value(token)
+                    .httpOnly(false)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(60 * 10).build();
 
-            System.out.println(res);
+            response.setHeader(org.springframework.http.HttpHeaders.SET_COOKIE, tokenCookie.toString());
 
-            // Responder con un mensaje de éxito, sin mostrar los tokens en el cuerpo
+            // Preparar la respuesta con el usuario y el token
+            res.put("usuario", usuario); 
+            res.put("token", token); 
+
+            // Responder con un JSON que incluye los datos del usuario y el token
             return ResponseEntity.status(HttpStatus.OK).body(res);
         } catch (BadCredentialsException e) {
             res.put("message", "Usuario o contraseña incorrecta");

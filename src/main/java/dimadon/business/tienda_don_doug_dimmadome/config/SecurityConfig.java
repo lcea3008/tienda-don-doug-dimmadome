@@ -1,7 +1,5 @@
 package dimadon.business.tienda_don_doug_dimmadome.config;
 
-import dimadon.business.tienda_don_doug_dimmadome.services.ServiceUsuario;
-import dimadon.business.tienda_don_doug_dimmadome.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +11,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import dimadon.business.tienda_don_doug_dimmadome.security.JwtAuthenticationFilter;
+import dimadon.business.tienda_don_doug_dimmadome.services.ServiceUsuario;
 
 @Configuration
 public class SecurityConfig {
@@ -26,48 +27,55 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 return http
-                                .csrf(csrf -> csrf.disable()) // Nueva forma de deshabilitar CSRF
-                                .cors(cors -> cors.and()) // Configurar CORS
-                                .authorizeHttpRequests(authz -> authz // Nueva forma de autorizar peticiones
-                                                .requestMatchers("/auth/**").permitAll() // Público
-                                                .requestMatchers("/categoria/obtener**", "/categoria/insertar**",
-                                                                "/cliente//{id}/estado**",
-                                                                "/detalleEntrada/obtener**",
-                                                                "/detalleEntrada/insertar**",
-                                                                "/detalleSalida/obtener**",
-                                                                "/devolucion/obtener**",
-                                                                "/entrada/obtener**", "/entrada/insertar**",
-                                                                "/kardex/obtener**", "/kardex/insertar**",
-                                                                "/producto/insertar**", "/producto/{id}**",
-                                                                "/producto/{id}/estado**", "/producto/estado**",
-                                                                "/proveedor/obtener**", "/proveedor/insertar**",
-                                                                "/salida/obtener**",
-                                                                "tipoDevolucion/obtener**",
-                                                                "/tipoDevolucion/insertar**",
-                                                                "/tipoPago/insertar**",
-                                                                "/tipoUsuario/obtener**", "/tipoUsuario/insertar**",
-                                                                "/unidadMedida/insertar**",
-                                                                "/usuario/obtener**", "/usuario/insertar**",
-                                                                "/usuario/{id}**", "/usuario/{id}/actualizar**",
-                                                                "/usuario/estado/{estado}**")
-                                                .hasAnyRole("ADMIN")
-                                                .requestMatchers("/producto/obtener/**",
+                                .csrf(csrf -> csrf.disable())
+                                .cors(cors -> cors.and())
+                                .authorizeHttpRequests(authz -> authz
+                                                // Public endpoints
+                                                .requestMatchers("/auth/**").permitAll()
+
+                                                // VENDEDOR and ADMIN endpoints
+                                                .requestMatchers(
+                                                                "/categoria/obtener/**",
+                                                                "/producto/obtener/**", // Changed from
+                                                                                        // /producto/obtener to include
+                                                                                        // sub-paths
+                                                                "/tipoDevolucion/obtener/**",
                                                                 "/cliente/obtener/**",
-                                                                "/cliente/insertar**",
+                                                                "/cliente/insertar/**",
                                                                 "/devolucion/insertar/**",
+                                                                "/salida/insertar/**",
                                                                 "/detalleSalida/insertar/**",
-                                                                "/unidadMedida/obtener**",
-                                                                "tipoPago/obtener**",
-                                                                "/salida/insertar**",
-                                                                "/api/reniec/dni**")
+                                                                "/unidadMedida/obtener/**",
+                                                                "/tipoPago/obtener/**",
+                                                                "/api/reniec/dni/**")
                                                 .hasAnyRole("ADMIN", "VENDEDOR")
-                                                .anyRequest().hasRole("ADMIN") // Por defecto, solo ADMIN
-                                )
+
+                                                // ADMIN only endpoints
+                                                .requestMatchers(
+                                                                "/categoria/insertar/**",
+                                                                "/cliente/{id}/estado/**",
+                                                                "/detalleEntrada/**",
+                                                                "/detalleSalida/obtener/**",
+                                                                "/devolucion/obtener/**",
+                                                                "/entrada/**",
+                                                                "/kardex/**",
+                                                                "/producto/insertar/**",
+                                                                "/producto/{id}/**",
+                                                                "/producto/{id}/estado/**",
+                                                                "/producto/estado/**",
+                                                                "/proveedor/**",
+                                                                "/salida/obtener/**",
+                                                                "/tipoDevolucion/insertar/**",
+                                                                "/tipoPago/insertar/**",
+                                                                "/tipoUsuario/**",
+                                                                "/unidadMedida/insertar/**",
+                                                                "/usuario/**")
+                                                .hasRole("ADMIN")
+
+                                                // Default policy
+                                                .anyRequest().authenticated())
                                 .sessionManagement(sess -> sess
-                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Política de
-                                                                                                        // creación de
-                                                                                                        // sesiones
-                                )
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                                 .build();
         }
