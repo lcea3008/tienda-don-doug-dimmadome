@@ -52,9 +52,8 @@ public class ServiceDevolucion {
             kardex.setProducto(producto);
             kardex.setNombreProducto(devolucion.getProducto().getNombre());
             kardex.setFecha(fechaFormateada);
-            kardex.setTipoOperacion("Entrada");
-            kardex.setDescripcion(devolucion.getDescripcion() + " - "
-                    + devolucion.getTipoDevolucion().getIdTipoDevolucion() + "= Entregada");
+            kardex.setTipoOperacion("Devolucion");
+            kardex.setDescripcion(devolucion.getDescripcion() + " - " + "Devolucion Entregada");
             kardex.setCantidadEntrada(devolucion.getCantidad() * -1);
             kardex.setCostoUnitarioEntrada(devolucion.getProducto().getPrecioUnitario());
             kardex.setCostoTotalEntrada(devolucion.getCantidad() * devolucion.getProducto().getPrecioUnitario() * -1);
@@ -74,9 +73,8 @@ public class ServiceDevolucion {
             kardex.setProducto(producto);
             kardex.setNombreProducto(devolucion.getProducto().getNombre());
             kardex.setFecha(fechaFormateada);
-            kardex.setTipoOperacion("Salida");
-            kardex.setDescripcion(devolucion.getDescripcion() + " - "
-                    + devolucion.getTipoDevolucion().getIdTipoDevolucion() + "= Recibida");
+            kardex.setTipoOperacion("Devolucion");
+            kardex.setDescripcion(devolucion.getDescripcion() + " - " + "Devolucion Recibida");
             kardex.setCantidadSalida(devolucion.getCantidad() * -1);
             kardex.setCostoUnitarioSalida(devolucion.getProducto().getPrecioUnitario());
             kardex.setCostoTotalSalida(devolucion.getCantidad() * devolucion.getProducto().getPrecioUnitario());
