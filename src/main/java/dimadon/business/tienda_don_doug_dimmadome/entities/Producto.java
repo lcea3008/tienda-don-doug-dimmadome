@@ -35,7 +35,7 @@ public class Producto {
     private Categoria categoria;
 
     @ManyToOne
-    @JoinColumn(name = "id_unidad_medida", nullable = false)
+    @JoinColumn(name ="id_unidad_medida", nullable = false)
     private UnidadMedida unidadMedida;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(10) DEFAULT 'activo'")

@@ -22,9 +22,8 @@ public class Devolucion {
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto producto;
 
-    @ManyToOne
-    @JoinColumn(name = "id_cliente", nullable = false)
-    private Cliente cliente;
+    @Column(name = "nombre_cliente", nullable = false)
+    private String nombre;
 
     @Column(name = "fecha_devolucion", nullable = false, updatable = false, insertable = false, columnDefinition = "DATE DEFAULT (CURDATE())")
     private String fechaDevolucion;
@@ -55,12 +54,12 @@ public class Devolucion {
         this.producto = producto;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getFechaDevolucion() {
